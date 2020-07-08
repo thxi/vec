@@ -15,6 +15,7 @@ int main() {
   vec_push(&my_vec, &a);
   a = 'd';
   vec_push(&my_vec, &a);
+  v_push(my_vec, a);
 
   printf("%s\n", my_vec.buf);
   vec_pop(&my_vec);

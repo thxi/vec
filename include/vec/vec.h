@@ -12,5 +12,7 @@ struct vec {
 // creates a new vec
 struct vec vec_new(size_t num_elements, size_t el_size);
 
+#define v_push(v, el) vec_push(&v, &el);
+
 int vec_push(struct vec* v, const void* el);
 int vec_pop(struct vec* v);
