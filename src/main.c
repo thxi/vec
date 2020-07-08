@@ -10,19 +10,19 @@ int main() {
   char a = 'a';
   struct vec my_vec = vec_new(10, sizeof(a));
 
-  vec_push(&my_vec, &a, sizeof(a));
+  vec_push(&my_vec, &a);
   a = 'b';
-  vec_push(&my_vec, &a, sizeof(a));
+  vec_push(&my_vec, &a);
   a = 'd';
-  vec_push(&my_vec, &a, sizeof(a));
+  vec_push(&my_vec, &a);
 
   printf("%s\n", my_vec.buf);
-  vec_pop(&my_vec, sizeof(a));
+  vec_pop(&my_vec);
   printf("%s\n", my_vec.buf);
 
   struct vec int_vec = vec_new(10, sizeof(int));
   int d = 2147483646;
-  vec_push(&int_vec, &d, sizeof(d));
+  vec_push(&int_vec, &d);
   printf("%d\n", *(int*)int_vec.buf);
 
   return 0;
