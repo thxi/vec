@@ -60,11 +60,40 @@ void test_vec_capacity() {
   }
   printf("After push: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
          vec_cap(v), vec_empty(v));
-  forEach(v, pint);
-  printf("\n");
   vec_shrink_to_fit(&v);
   printf("After shrink: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
          vec_cap(v), vec_empty(v));
+
+  vec_free(v);
+}
+
+void test_vec_modifiers() {
+  printf("\nTest vec modifiers:\n");
+  struct vec v = vec_new(sizeof(int));
+  for (int i = 0; i < 400; i++) {
+    vec_push(&v, &i);
+  }
+  vec_clear(&v);
+  printf("After clear: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
+         vec_cap(v), vec_empty(v));
+
+  for (int i = 0; i < 400; i++) {
+    vec_push(&v, &i);
+  }
+  printf("After push: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
+         vec_cap(v), vec_empty(v));
+
+  vec_resize(&v, 10);
+  printf("After resize less: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
+         vec_cap(v), vec_empty(v));
+  forEach(v, pint);
+  printf("\n");
+
+  vec_resize(&v, 12);
+  printf("After resize more: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
+         vec_cap(v), vec_empty(v));
+  forEach(v, pint);
+  printf("\n");
 
   vec_free(v);
 }

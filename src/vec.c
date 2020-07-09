@@ -46,6 +46,37 @@ bool vec_reserve(struct vec* v, size_t new_cap) {
 
 void vec_shrink_to_fit(struct vec* v) { v->cap = v->size; }
 
+void vec_clear(struct vec* v) {
+  memset(v->buf, 0, v->el_size * v->size);
+  v->size = 0;
+}
+
+bool vec_resize(struct vec* v, size_t count) {
+  if (count == v->size) {
+    return true;
+  }
+  if (count > v->size) {
+    bool s = vec_reserve(v, count);
+    if (!s) {
+      // could not allocate more memory
+      return false;
+    }
+    char* ptr = ((char*)v->buf) + v->el_size * v->size;
+    memset(ptr, 0, v->el_size * (count - v->size));
+    v->size = count;
+    return true;
+  }
+
+  void* new_ptr = realloc(v->buf, count * v->el_size);
+  if (new_ptr == NULL) {
+    return false;
+  }
+  v->buf = new_ptr;
+  v->size = count;
+  v->cap = count;
+  return true;
+}
+
 int vec_push(struct vec* v, const void* el) {
   if (v->cap == 0) {
     vec_reserve(v, 2);
@@ -61,7 +92,6 @@ int vec_push(struct vec* v, const void* el) {
 
 int vec_pop(struct vec* v) {
   v->size--;
-  // char* ptr = ((char*)v->buf) + v->el_size * v->size;
-  // memset(ptr, 0, v->el_size);
+  // TODO shrink if cap/size >= 4
   return 0;
 }
