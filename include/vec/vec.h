@@ -11,8 +11,12 @@ struct vec {
   size_t el_size;
 };
 
-// creates a new vec
+// Creates a new vec
 struct vec vec_new(size_t el_size);
+// Frees the memory owned by vec
+// ! This does not free the elements memory:
+// e.g. if you have a vector of vectors the memory of each element should be
+// freed first
 void vec_free(struct vec v);
 
 /* Element access */
@@ -48,14 +52,22 @@ void vec_shrink_to_fit(struct vec* v);
 // Leaves the capacity unchanged
 void vec_clear(struct vec* v);
 
-// Inserts value before pos
-// Returns pointer to the inserted value
-void* vec_insert(struct vec* v, size_t pos, const void* value);
-
 #define v_push(v, el) vec_push(&v, &el);
-// TODO handle error when shrinking
-int vec_push(struct vec* v, const void* value);
-int vec_pop(struct vec* v);
+
+// Push value to the end of the vector
+// Allocates memory if size == capacity
+// Returns true on success
+// Returns false if allocation fails
+bool vec_push(struct vec* v, const void* value);
+
+// Removes the last value in the array
+// If cap/size >= 4, then it tries to reallocate the memory so that the new cap
+// is 4.
+// Calling when v.size == 0 is undefined
+// Returns true on success
+// Returns false if allocation fails
+bool vec_pop(struct vec* v);
+
 // Resizes the container to contain count elements.If the current size is
 // greater than count, the vector is reduced to its first count elements.
 // If the current size is less than count, new memory is allocated and set to 0

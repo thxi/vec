@@ -95,6 +95,17 @@ void test_vec_modifiers() {
   forEach(v, pint);
   printf("\n");
 
+  vec_resize(&v, 0);
+  for (int i = 0; i < 15; i++) {
+    vec_push(&v, &i);
+  }
+  printf("After push 15: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
+         vec_cap(v), vec_empty(v));
+  for (int i = 0; i < 15; i++) {
+    vec_pop(&v);
+    printf("  after pop: size: %ld, cap: %ld\n", vec_size(v), vec_cap(v));
+  }
+
   vec_free(v);
 }
 

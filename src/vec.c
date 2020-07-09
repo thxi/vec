@@ -52,6 +52,12 @@ void vec_clear(struct vec* v) {
 }
 
 bool vec_resize(struct vec* v, size_t count) {
+  if (count == 0) {
+    free(v->buf);
+    v->buf = NULL;
+    v->cap = 0;
+    v->size = 0;
+  }
   if (count == v->size) {
     return true;
   }
@@ -77,21 +83,36 @@ bool vec_resize(struct vec* v, size_t count) {
   return true;
 }
 
-int vec_push(struct vec* v, const void* el) {
+bool vec_push(struct vec* v, const void* el) {
   if (v->cap == 0) {
-    vec_reserve(v, 2);
+    bool s = vec_reserve(v, 2);
+    if (!s) {
+      return false;
+    }
   }
   if (v->cap == v->size) {
-    vec_reserve(v, v->cap * 2);
+    bool s = vec_reserve(v, v->cap * 2);
+    if (!s) {
+      return false;
+    }
   }
   char* ptr = ((char*)v->buf) + v->el_size * v->size;
   memcpy(ptr, el, v->el_size);
   v->size++;
-  return 0;
+  return true;
 }
 
-int vec_pop(struct vec* v) {
+bool vec_pop(struct vec* v) {
   v->size--;
   // TODO shrink if cap/size >= 4
-  return 0;
+  if (v->cap / v->size >= 4) {
+    size_t new_cap = v->cap / 2;
+    void* new_ptr = realloc(v->buf, new_cap * v->el_size);
+    if (new_ptr == NULL) {
+      return false;
+    }
+    v->buf = new_ptr;
+    v->cap = new_cap;
+  }
+  return true;
 }
