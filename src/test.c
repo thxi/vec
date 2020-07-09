@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "vec/vec.h"
+
 void pint(void* v) {
   printf("%d ", *(int*)v);
   return;
@@ -23,6 +25,10 @@ void test_vec_int() {
 
   forEach(v, pint);
   printf("\n");
+  printf("at(0): %d\n", *(int*)vec_at(v, 0));
+  printf("at(2): %d\n", *(int*)vec_at(v, 3));
+  printf("front: %d\n", *(int*)vec_front(v));
+  printf("back: %d\n", *(int*)vec_back(v));
 
   vec_free(v);
 }
