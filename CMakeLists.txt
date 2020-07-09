@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.16)
 project(libvec VERSION 1.0.0 LANGUAGES C)
 
 set_property(GLOBAL PROPERTY C_STANDARD 11)
-# set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Werror")
-set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra")
+set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Werror")
+set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fsanitize=address -fsanitize=undefined")
 
 add_library(vec 
     src/vec.c

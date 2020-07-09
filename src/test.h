@@ -3,4 +3,5 @@
 #include <stdio.h>
 #include <vec/vec.h>
 
-void test_push(struct vec v);
+void test_vec_int();
+void test_vec_char();

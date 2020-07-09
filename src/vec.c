@@ -25,3 +25,5 @@ int vec_pop(struct vec* v) {
   memset(ptr, 0, v->el_size);
   return 0;
 }
+
+void vec_free(struct vec v) { free(v.buf); }
