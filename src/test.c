@@ -6,14 +6,16 @@
 
 #include "vec/vec.h"
 
+void test_big_reserve() {}
+
 void pint(void* v) {
   printf("%d ", *(int*)v);
   return;
 }
 
 void test_vec_int() {
-  printf("Test vec int:\n");
-  struct vec v = vec_new(10, sizeof(int));
+  printf("\nTest vec int:\n");
+  struct vec v = vec_new(sizeof(int));
   int d = 2147483646;
   v_push(v, d);
   d = 2147483645;
@@ -26,9 +28,43 @@ void test_vec_int() {
   forEach(v, pint);
   printf("\n");
   printf("at(0): %d\n", *(int*)vec_at(v, 0));
-  printf("at(2): %d\n", *(int*)vec_at(v, 3));
+  printf("at(2): %d\n", *(int*)vec_at(v, 2));
   printf("front: %d\n", *(int*)vec_front(v));
   printf("back: %d\n", *(int*)vec_back(v));
+  printf("size %ld, cap: %ld\n", vec_size(v), vec_cap(v));
+
+  vec_pop(&v);
+
+  printf("After pop\n");
+  forEach(v, pint);
+  printf("\n");
+  printf("at(0): %d\n", *(int*)vec_at(v, 0));
+  printf("at(2): %d\n", *(int*)vec_at(v, 2));
+  printf("front: %d\n", *(int*)vec_front(v));
+  printf("back: %d\n", *(int*)vec_back(v));
+  printf("size %ld, cap: %ld\n", vec_size(v), vec_cap(v));
+
+  vec_free(v);
+}
+
+void test_vec_capacity() {
+  printf("\nTest vec capacity:\n");
+  struct vec v = vec_new(sizeof(int));
+  printf("Initial size: %ld, cap: %ld, empty: %d\n", vec_size(v), vec_cap(v),
+         vec_empty(v));
+  vec_reserve(&v, 10);
+  printf("After reserve: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
+         vec_cap(v), vec_empty(v));
+  for (int i = 0; i < 400; i++) {
+    vec_push(&v, &i);
+  }
+  printf("After push: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
+         vec_cap(v), vec_empty(v));
+  forEach(v, pint);
+  printf("\n");
+  vec_shrink_to_fit(&v);
+  printf("After shrink: size: %ld, cap: %ld, empty: %d\n", vec_size(v),
+         vec_cap(v), vec_empty(v));
 
   vec_free(v);
 }
@@ -39,9 +75,10 @@ void pchar(void* v) {
 }
 
 void test_vec_char() {
-  printf("Test vec char:\n");
+  printf("\nTest vec char:\n");
   char a = 'a';
-  struct vec my_vec = vec_new(10, sizeof(a));
+  struct vec my_vec = vec_new(sizeof(a));
+  vec_reserve(&my_vec, 10);
 
   v_push(my_vec, a);
   a = 'b';
@@ -49,9 +86,9 @@ void test_vec_char() {
   a = 'c';
   v_push(my_vec, a);
 
-  printf("%s\n", (char*)my_vec.buf);
+  forEach(my_vec, pchar);
+  printf("\n");
   vec_pop(&my_vec);
-  printf("%s\n", (char*)my_vec.buf);
 
   printf("forEach: \n");
   forEach(my_vec, pchar);

@@ -5,3 +5,4 @@
 
 void test_vec_int();
 void test_vec_char();
+void test_vec_capacity();
