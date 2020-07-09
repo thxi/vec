@@ -20,10 +20,10 @@ suppose you have the following directory structure:
     └── main.c
 
 - Checkout the repository as a submodule
-mkdir external && cd external && git submodule add git@github.com:thxi/vec.git
+mkdir external && cd external && git submodule add git@github.com:thxi/vec.git && cd ..
 
-- Make a CMakeLists.txt in external directory
-echo "add_subdirectory(vec)" > CmakeLists.txt
+- Make a CMakeLists.txt in the external directory
+echo "add_subdirectory(vec)" > external/CmakeLists.txt
 
 - add the following lines to your main CMakeLists (which resides in the project root)
 add_subdirectory(vec) 
@@ -36,17 +36,28 @@ USE
 
 After installing as described above:
 
+#include <stdio.h>
 #include "vec/vec.h"
 int main() {
-  struct vec v =
-      vec_new(sizeof(int));  // size of the element type should be specified
-  int d = 1337;
-  vec_push(&v, &d);
-  printf("First element: %d\n", vec_at(v, 0));
-}
+  vec_type(int) v = vec_new();
+  for (int i = 0; i < 10; i++) {
+    bool ret = vec_push(v, i + 1);
+    if (ret != true) {
+        return 1; // error allocating memory
+    }
+  }
+  for_each(v) { printf("%d ", v.buf[i]); }
+  printf("\n");
+  for (int i = 0; i < 5; i++) {
+    vec_pop(v);
+  }
+  vec_shrink_to_fit(v);
+  assert(v.size == 5);
+  assert(v.cap == 5);
+  for (int i = 0; i < 5; i++) {
+    vec_pop(v);
+  }
+  assert(vec_empty(v) == true);
 
-TODO:
-[X] implement core methods as in https://en.cppreference.com/w/cpp/container/vector
-[X] add sanitizer to test binary
-[~] add tests
-[X] add install
+  vec_free(v); // do not forget to free
+}

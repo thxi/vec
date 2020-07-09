@@ -3,116 +3,64 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct vec vec_new(size_t el_size) {
-  struct vec v;
-  v.size = 0;
-  v.cap = 0;
-  v.buf = NULL;
-
-  v.el_size = el_size;
-
-  return v;
-}
-
-void vec_free(struct vec v) { free(v.buf); }
-
-void* vec_at(struct vec v, size_t pos) {
-  char* ptr = ((char*)v.buf) + v.el_size * pos;
-  return ptr;
-}
-
-void* vec_front(struct vec v) { return vec_at(v, 0); }
-void* vec_back(struct vec v) { return vec_at(v, v.size - 1); }
-
-bool vec_empty(struct vec v) { return v.size == 0; }
-
-size_t vec_size(struct vec v) { return v.size; }
-
-size_t vec_cap(struct vec v) { return v.cap; }
-
-bool vec_reserve(struct vec* v, size_t new_cap) {
-  if (v->cap >= new_cap) {
+bool _vec_reserve(size_t* cap, void** buf, size_t val_size, size_t new_cap) {
+  if (*cap >= new_cap) {
     return true;
   }
-  // printf("reserving %ld bytes\n", new_cap * v->el_size);
-  void* new_ptr = realloc(v->buf, new_cap * v->el_size);
+  void* new_ptr = realloc(*buf, new_cap * val_size);
   if (new_ptr == NULL) {
     return false;
   }
-  v->buf = new_ptr;
-  v->cap = new_cap;
+  *buf = new_ptr;
+  *cap = new_cap;
   return true;
 }
 
-void vec_shrink_to_fit(struct vec* v) { v->cap = v->size; }
-
-void vec_clear(struct vec* v) {
-  memset(v->buf, 0, v->el_size * v->size);
-  v->size = 0;
+bool _vec_extend(size_t* size, size_t* cap, void** buf, size_t val_size) {
+  if (*cap == 0) {
+    bool s = _vec_reserve(cap, buf, val_size, 2);
+    if (!s) {
+      return false;
+    }
+  }
+  if (*cap == *size) {
+    bool s = _vec_reserve(cap, buf, val_size, (*cap) * 2);
+    if (!s) {
+      return false;
+    }
+  }
+  return true;
 }
 
-bool vec_resize(struct vec* v, size_t count) {
+bool _vec_resize(size_t* size, size_t* cap, void** buf, size_t val_size,
+                 size_t count) {
   if (count == 0) {
-    free(v->buf);
-    v->buf = NULL;
-    v->cap = 0;
-    v->size = 0;
+    free(*buf);
+    *buf = NULL;
+    *cap = 0;
+    *size = 0;
   }
-  if (count == v->size) {
+  if (count == *size) {
     return true;
   }
-  if (count > v->size) {
-    bool s = vec_reserve(v, count);
+  if (count > *size) {
+    bool s = _vec_reserve(cap, buf, val_size, count);
     if (!s) {
       // could not allocate more memory
       return false;
     }
-    char* ptr = ((char*)v->buf) + v->el_size * v->size;
-    memset(ptr, 0, v->el_size * (count - v->size));
-    v->size = count;
+    char* ptr = ((char*)*buf) + val_size * (*size);
+    memset(ptr, 0, val_size * (count - (*size)));
+    *size = count;
     return true;
   }
 
-  void* new_ptr = realloc(v->buf, count * v->el_size);
+  void* new_ptr = realloc(*buf, count * val_size);
   if (new_ptr == NULL) {
     return false;
   }
-  v->buf = new_ptr;
-  v->size = count;
-  v->cap = count;
-  return true;
-}
-
-bool vec_push(struct vec* v, const void* el) {
-  if (v->cap == 0) {
-    bool s = vec_reserve(v, 2);
-    if (!s) {
-      return false;
-    }
-  }
-  if (v->cap == v->size) {
-    bool s = vec_reserve(v, v->cap * 2);
-    if (!s) {
-      return false;
-    }
-  }
-  char* ptr = ((char*)v->buf) + v->el_size * v->size;
-  memcpy(ptr, el, v->el_size);
-  v->size++;
-  return true;
-}
-
-bool vec_pop(struct vec* v) {
-  v->size--;
-  // TODO shrink if cap/size >= 4
-  if (v->cap / v->size >= 4) {
-    size_t new_cap = v->cap / 2;
-    void* new_ptr = realloc(v->buf, new_cap * v->el_size);
-    if (new_ptr == NULL) {
-      return false;
-    }
-    v->buf = new_ptr;
-    v->cap = new_cap;
-  }
+  *buf = new_ptr;
+  *size = count;
+  *cap = count;
   return true;
 }
