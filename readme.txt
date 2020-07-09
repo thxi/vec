@@ -61,3 +61,13 @@ int main() {
 
   vec_free(v); // do not forget to free
 }
+
+
+TODO:
+
+[X] implement core methods as in https://en.cppreference.com/w/cpp/container/vector
+[X] add sanitizer to test binary
+[X] add tests
+[X] add install
+[ ] add example to a different directory
+[ ] structure tests
