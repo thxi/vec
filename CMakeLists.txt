@@ -17,7 +17,7 @@ add_executable(vecmain
 
 target_include_directories(vec
     PUBLIC 
-        ${CMAKE_CURRENT_SOURCE_DIR}/include>
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
