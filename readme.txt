@@ -37,6 +37,7 @@ USE
 After installing as described above:
 
 #include <stdio.h>
+#include <assert.h>
 #include "vec/vec.h"
 int main() {
   vec_type(int) v = vec_new();
