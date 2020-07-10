@@ -69,5 +69,5 @@ TODO:
 [X] add sanitizer to test binary
 [X] add tests
 [X] add install
+[X] structure tests
 [ ] add example to a different directory
-[ ] structure tests
